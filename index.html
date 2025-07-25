@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO List</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="notification-container" class="notification-container"></div>
+    
+    <header class="header">
+        <h1><i class="fas fa-tasks"></i>TODO List</h1>
+        <div class="stats">
+            <span class="stat-item">
+                <i class="fas fa-list"></i>
+                Total: <span id="total-count">0</span>
+            </span>
+            <span class="stat-item">
+                <i class="fas fa-clock"></i>
+                Pending: <span id="pending-count">0</span>
+            </span>
+            <span class="stat-item">
+                <i class="fas fa-check"></i>
+                Completed: <span id="completed-count">0</span>
+            </span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="todo-form-container">
+            <form id="todo-form" class="todo-form">
+                <div class="form-group">
+                    <input type="text" id="todo-title" placeholder="Enter task title..." required>
+                    <textarea id="todo-description" placeholder="Enter task description (optional)..." rows="2"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="todo-due-date">Due Date:</label>
+                        <input type="date" id="todo-due-date" class="date-input">
+                    </div>
+                    <div class="form-col">
+                        <label for="todo-start-time">Start Time:</label>
+                        <input type="time" id="todo-start-time" class="time-input">
+                    </div>
+                    <div class="form-col">
+                        <label for="todo-end-time">End Time:</label>
+                        <input type="time" id="todo-end-time" class="time-input">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <select id="todo-priority" class="priority-select">
+                        <option value="low">Low Priority</option>
+                        <option value="medium" selected>Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Task
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="filter-container">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search tasks...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+                <button class="filter-btn" data-filter="high">High Priority</button>
+                <button class="filter-btn" data-filter="today">Due Today</button>
+                <button class="filter-btn" data-filter="overdue">Overdue</button>
+                <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+            </div>
+        </div>
+
+        <div class="todo-list-container">
+            <div id="todo-list" class="todo-list">
+            </div>
+            <div id="empty-state" class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>No tasks yet!</h3>
+                <p>Add your first task to get started.</p>
+            </div>
+        </div>
+
+        <div class="bulk-actions">
+            <button id="mark-all-done" class="btn btn-success">
+                <i class="fas fa-check-double"></i> Mark All Done
+            </button>
+            <button id="clear-completed" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> Clear Completed
+            </button>
+            <button id="clear-all" class="btn btn-warning">
+                <i class="fas fa-times"></i> Clear All
+            </button>
+        </div>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Task</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="edit-form">
+                    <input type="hidden" id="edit-id">
+                    <div class="form-group">
+                        <label for="edit-title">Title:</label>
+                        <input type="text" id="edit-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-description">Description:</label>
+                        <textarea id="edit-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label for="edit-due-date">Due Date:</label>
+                            <input type="date" id="edit-due-date" class="date-input">
+                        </div>
+                        <div class="form-col">
+                            <label for="edit-start-time">Start Time:</label>
+                            <input type="time" id="edit-start-time" class="time-input">
+                        </div>
+                        <div class="form-col">
+                            <label for="edit-end-time">End Time:</label>
+                            <input type="time" id="edit-end-time" class="time-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-priority">Priority:</label>
+                        <select id="edit-priority">
+                            <option value="low">Low Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Action</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message"></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-action">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-action">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
